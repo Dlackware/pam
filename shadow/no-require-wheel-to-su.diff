@@ -1,0 +1,13 @@
+Seulement dans shadow-4.2.1/etc/pam.d: .su.un~
+diff -ru shadow-4.2.1.orig/etc/pam.d/su shadow-4.2.1/etc/pam.d/su
+--- shadow-4.2.1.orig/etc/pam.d/su	2014-03-01 18:50:05.000000000 +0100
++++ shadow-4.2.1/etc/pam.d/su	2014-10-08 17:02:01.074379713 +0200
+@@ -3,7 +3,7 @@
+ # Uncomment the following line to implicitly trust users in the "wheel" group.
+ #auth		sufficient	pam_wheel.so trust use_uid
+ # Uncomment the following line to require a user to be in the "wheel" group.
+-auth		required	pam_wheel.so use_uid
++#auth		required	pam_wheel.so use_uid
+ auth		include		system-auth
+ account		include		system-auth
+ password	include		system-auth
