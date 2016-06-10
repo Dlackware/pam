@@ -2,7 +2,7 @@
  
 # Copyright 2010  Vincent Batts, vbatts@hashbangbash.com
 # Copyright 2010, 2011  Patrick J. Volkerding, Sebeka, Minnesota, USA
-# Copyright 2014-2016  Bart van der Hall, Almere, NL
+# Copyright 2014  Bart van der Hall, Istanbul, TR
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -24,10 +24,9 @@
 
 SRCNAM=Linux-PAM
 PKGNAM=pam
-VERSION=${VERSION:-1.2.1}
-PAMRHVER=${PAMRHVER:-0.99.11}
-BUILD=${BUILD:-1}
-TAG=${TAG:-_pam}
+VERSION=${VERSION:-1.3.0}
+BUILD=${BUILD:-3}
+TAG=${TAG:-_dlack}
 
 if [ -z "$ARCH" ]; then
   case "$( uname -m )" in
@@ -37,12 +36,15 @@ if [ -z "$ARCH" ]; then
   esac
 fi
 
+wget -c http://linux-pam.org/library/${SRCNAM}-${VERSION}.tar.bz2
+wget -c https://fedorahosted.org/releases/p/a/pam-redhat/pam-redhat-0.99.11.tar.bz2
+
 NUMJOBS=${NUMJOBS:--j1}
 
 CWD=$(pwd)
-TMP=${TMP:-/tmp/pam-hacks}
+TMP=${TMP:-/tmp/dlackware}
 PKG=$TMP/package-$PKGNAM
-OUTPUT=${OUTPUT:-/var/cache/pam-hacks}
+OUTPUT=${OUTPUT:-/var/cache/dlackware}
 
 if [ "$ARCH" = "i486" ]; then
   SLKCFLAGS="-O2 -march=i486 -mtune=i686"
@@ -70,22 +72,8 @@ cd $SRCNAM-$VERSION || exit 1
 # Better take the Red Hat added modules and patches, because that's very
 # likely to be the most standard as far as PAM goes:
 tar xvf $CWD/pam-redhat-0.99.11.tar.bz2 || exit 1
-mv pam-redhat-$PAMRHVER/{CHANGELOG*,COPYING*,README*} .
-mv pam-redhat-$PAMRHVER/* modules
-
-unset SBO_AUTOGEN
-if [ -r ${CWD}/apply-patches.sh ]; then
-  . ${CWD}/apply-patches.sh
-fi
-
-# sed -i -e 's|/lib /usr/lib|/lib /usr/lib /lib64 /usr/lib64|g' m4/libtool.m4
-
-if [ "${SBO_AUTOGEN}" = "YES" ] ;then
-  autoreconf -ivf || exit $?
-fi
-
-xmlto man modules/pam_faillock/faillock.8.xml -o modules/pam_faillock/
-xmlto man modules/pam_faillock/pam_faillock.8.xml -o modules/pam_faillock/
+mv pam-redhat-0.99.11/{CHANGELOG*,COPYING*,README*} .
+mv pam-redhat-0.99.11/* modules
 
 chown -R root:root .
 find . \
@@ -94,23 +82,37 @@ find . \
  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
  -exec chmod 644 {} \;
 
+unset SB_AUTOGEN
+if [ -r ${CWD}/apply-patches.sh ]; then
+  . ${CWD}/apply-patches.sh
+fi
+
+sed -i -e 's|/lib /usr/lib|/lib /usr/lib /lib64 /usr/lib64|g' m4/libtool.m4
+
+if [ "${SBO_AUTOGEN}" = "YES" ] ;then
+  autoreconf -ivf || exit $?
+fi
+
+autoreconf -ivf
 
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
   --prefix=/ \
-  --libdir=/lib${LIBDIRSUFFIX} \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
   --sysconfdir=/etc \
   --includedir=/usr/include/security \
   --datarootdir=/usr/share \
-  --localstatedir=/var/lib \
-  --enable-securedir=/lib${LIBDIRSUFFIX}/security \
+  --localstatedir=/var \
   --mandir=/usr/man \
-  --docdir=/usr/doc/$PKGNAM-$VERSION \
+  --without-xml-catalog \
   --enable-read-both-confs \
   --disable-prelude \
   --disable-selinux \
   --build=$ARCH-slackware-linux || exit 1
+
+#   --docdir=/usr/doc/$PKGNAM-$VERSION \
+#   --enable-securedir=/lib${LIBDIRSUFFIX}/security \
 
 make $NUMJOBS || make || exit 1
 
@@ -179,14 +181,6 @@ rm -f $PKG/usr/doc/$PKGNAM-$VERSION/index.html
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
-
-# Don't clobber existing config files
-find $PKG/etc -type f -exec mv {} {}.new \;
-( cd $PKG
-  for i in $(find etc -type f -name "*.new") ; do
-  echo "config $i" >> $PKG/install/doinst.sh ;
-done
-)
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.txz

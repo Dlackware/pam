@@ -16,6 +16,6 @@ patch -p1 -E --backup --verbose -i ${SBO_PATCHDIR}/pam-1.2.0-use-elinks.patch
 patch -p1 -E --backup --verbose -i ${SBO_PATCHDIR}/pam-1.1.8-audit-user-mgmt.patch
 
 # Set to YES if autogen is needed
-SBO_AUTOGEN=YES
+SB_AUTOGEN=YES
 
 set +e +o pipefail

@@ -1,8 +1,5 @@
 #!/bin/sh
-# Copyright 2010,2011 Vincent Batts, Vienna, VA, USA
-# Copyright 2010  Patrick Volkerding, Sebeka, Minnesota, USA
-# Copyright 2014-2016  Bart van der Hall, Almere, NL
-#
+# Copyright 2014 Bart van der Hall, Istanbul, TR
 # All rights reserved.
 #
 #   Permission to use, copy, modify, and distribute this software for
@@ -27,7 +24,7 @@
 PKGNAM=cracklib
 VERSION=${VERSION:-2.9.6}
 BUILD=${BUILD:-1}
-TAG=${TAG:-_pam}
+TAG=${TAG:-_dlack}
 
 # Automatically determine the architecture we're building on:
 if [ -z "$ARCH" ]; then
@@ -38,12 +35,15 @@ if [ -z "$ARCH" ]; then
   esac
 fi
 
+wget -c https://github.com/cracklib/cracklib/releases/download/$PKGNAM-$VERSION/$PKGNAM-$VERSION.tar.gz \
+        https://github.com/cracklib/cracklib/releases/download/$PKGNAM-$VERSION/$PKGNAM-words-$VERSION.gz
+
 NUMJOBS=${NUMJOBS:--j7}
 
 CWD=$(pwd)
-TMP=${TMP:-/tmp/pam-hacks}
+TMP=${TMP:-/tmp/dlackware}
 PKG=$TMP/package-$PKGNAM
-OUTPUT=${OUTPUT:-/var/cache/pam-hacks}
+OUTPUT=${OUTPUT:-/var/cache/dlackware}
 
 if [ "$ARCH" = "i486" ]; then
   SLKCFLAGS="-O2 -march=i486 -mtune=i686"
@@ -90,11 +90,9 @@ CXXFLAGS="$SLKCFLAGS" \
   --localstatedir=/var \
   --mandir=/usr/man \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
+  --with-default-dict=/usr/share/cracklib/pw_dict \
   --disable-static \
   --build=$ARCH-slackware-linux
-
-#  --with-default-dict=/usr/share/cracklib/pw_dict \
-
 
 make $NUMJOBS || exit 1
 make install DESTDIR=$PKG || exit 1
