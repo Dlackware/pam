@@ -35,9 +35,6 @@ if [ -z "$ARCH" ]; then
   esac
 fi
 
-wget -c https://github.com/cracklib/cracklib/releases/download/$PKGNAM-$VERSION/$PKGNAM-$VERSION.tar.gz \
-        https://github.com/cracklib/cracklib/releases/download/$PKGNAM-$VERSION/$PKGNAM-words-$VERSION.gz
-
 NUMJOBS=${NUMJOBS:--j7}
 
 CWD=$(pwd)
