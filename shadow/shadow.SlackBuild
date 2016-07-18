@@ -44,8 +44,6 @@ if [ -z "$ARCH" ]; then
   esac
 fi
 
-wget -c ftp://ftp.slackware.com/pub/slackware/slackware-current/source/a/${PKGNAM}/${PKGNAM}-${VERSION}.tar.xz
-
 NUMJOBS=${NUMJOBS:--j6}
 
 CWD=$(pwd)
