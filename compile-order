@@ -4,5 +4,3 @@ pam
 libpwquality
 shadow
 pam_krb5
-samba
-openssh

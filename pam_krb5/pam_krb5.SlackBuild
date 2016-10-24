@@ -24,8 +24,6 @@ if [ -z "$ARCH" ]; then
   esac
 fi
 
-wget -c https://fedorahosted.org/releases/p/a/pam_krb5/${PKGNAM}-${VERSION}.tar.gz
-
 CWD=$(pwd)
 TMP=${TMP:-/tmp/dlackware}
 PKG=$TMP/package-$PKGNAM
