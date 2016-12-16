@@ -23,7 +23,7 @@
 
 PKGNAM=cracklib
 VERSION=${VERSION:-2.9.6}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-_dlack}
 
 # Automatically determine the architecture we're building on:
@@ -103,8 +103,8 @@ rm -f ${PKG}/usr/share/${PKGNAM}/cracklib-small
 sed s,/usr/lib/cracklib_dict,${DICTPATH},g lib/crack.h \
   > ${PKG}/usr/include/crack.h
 mkdir -p ${PKG}/usr/sbin
-ln -s cracklib-format ${PKG}/usr/sbin/mkdict
-ln -s cracklib-packer ${PKG}/usr/sbin/packer
+ln -s ../../sbin/cracklib-format ${PKG}/usr/sbin/mkdict
+ln -s ../../sbin/cracklib-packer ${PKG}/usr/sbin/packer
 
 toprelpath=..
 touch ${PKG}/top
