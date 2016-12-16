@@ -13,7 +13,7 @@
 
 PKGNAM=pam_krb5
 VERSION=2.4.13
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-_dlack}
 
 if [ -z "$ARCH" ]; then
