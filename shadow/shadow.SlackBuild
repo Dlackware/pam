@@ -22,8 +22,8 @@
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 PKGNAM=shadow
-VERSION=${VERSION:-4.2.1}
-BUILD=${BUILD:-6}
+VERSION=${VERSION:-4.4}
+BUILD=${BUILD:-1}
 TAG=${TAG:-_dlack}
 
 # Set to NO to disable pam support
@@ -88,6 +88,11 @@ find . \
 # and not requiring users to be in the 'wheel' group, in order to use `su`
 cat $CWD/pamd_settings.patch | patch -p2
 
+unset SBO_AUTOGEN
+if [ -r ${CWD}/apply-patches.sh ]; then
+  . ${CWD}/apply-patches.sh
+fi
+
 sed -i -e '/^GROUP=/s|=.*$|=100|g' etc/useradd || exit 1
 
 sed -i -e '/<stdio.h>/a#include <stdarg.h>' libmisc/copydir.c || exit 1
@@ -112,8 +117,13 @@ else
   SBO_PAMOPTS='--without-libpam --without-libcrack'
 fi
 
-rm -f po/*.gmo
-rm -f po/stamp-po
+#rm -f po/*.gmo
+#rm -f po/stamp-po
+
+if [ "${SBO_AUTOGEN}" = "YES" ] ;then
+  autoreconf -ivf || exit $?
+fi
+
 
 CFLAGS="${SLKCFLAGS} -fpie" \
 CXXFLAGS="${SLKCFLAGS}" \
