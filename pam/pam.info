@@ -3,6 +3,6 @@ SRCNAM="Linux-PAM"
 VERSION="1.3.0"
 HOMEPAGE="http://www.linux-pam.org/"
 DOWNLOAD="http://linux-pam.org/library/Linux-PAM-1.3.0.tar.bz2 \
-          https://fedorahosted.org/releases/p/a/pam-redhat/pam-redhat-0.99.11.tar.bz2"
+          https://hashbangbash.com/downloads/pam/source/a/pam/pam-redhat-0.99.11.tar.bz2"
 MD5SUM="da4b2289b7cfb19583d54e9eaaef1c3a \
         29eab110f57e8d60471081a6278a5a92"
