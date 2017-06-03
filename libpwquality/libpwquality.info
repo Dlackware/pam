@@ -1,5 +1,5 @@
 PKGNAM="libpwquality"
-VERSION="1.3.0"
+VERSION="1.4.0"
 HOMEPAGE="https://github.com/libpwquality/libpwquality"
-DOWNLOAD="https://github.com/libpwquality/libpwquality/releases/download/libpwquality-1.3.0/libpwquality-1.3.0.tar.bz2"
-MD5SUM="2a3d4ba1d11b52b4f6a7f39622ebf736"
+DOWNLOAD="https://github.com/libpwquality/libpwquality/releases/download/libpwquality-1.4.0/libpwquality-1.4.0.tar.bz2"
+MD5SUM="b8defcc7280a90e9400d6689c93a279c"
