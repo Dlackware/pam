@@ -24,8 +24,8 @@ ApplyPatch() {
 }
 
 # patch -p0 -E --backup --verbose -i ${SBO_PATCHDIR}/${NAME}.patch
-patch -p1 -E --backup --verbose -i ${SBO_PATCHDIR}/su1.patch
-patch -p1 -E --backup --verbose -i ${SBO_PATCHDIR}/su2.patch
+#patch -p1 -E --backup --verbose -i ${SBO_PATCHDIR}/su1.patch
+#patch -p1 -E --backup --verbose -i ${SBO_PATCHDIR}/su2.patch
 
 # Set to YES if autogen is needed
 SBO_AUTOGEN=NO
