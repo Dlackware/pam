@@ -24,7 +24,7 @@
 
 SRCNAM=Linux-PAM
 PKGNAM=pam
-VERSION=${VERSION:-1.3.0}
+VERSION=${VERSION:-$(echo $SRCNAM-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
 BUILD=${BUILD:-3}
 TAG=${TAG:-_dlack}
 
