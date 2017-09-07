@@ -25,7 +25,7 @@
 SRCNAM=Linux-PAM
 PKGNAM=pam
 VERSION=${VERSION:-$(echo $SRCNAM-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
-BUILD=${BUILD:-4}
+BUILD=${BUILD:-5}
 TAG=${TAG:-_dlack}
 
 if [ -z "$ARCH" ]; then
@@ -66,12 +66,6 @@ rm -rf $SRCNAM-$VERSION
 tar xvf $CWD/$SRCNAM-$VERSION.tar.?z* || exit 1
 cd $SRCNAM-$VERSION || exit 1
 
-# Better take the Red Hat added modules and patches, because that's very
-# likely to be the most standard as far as PAM goes:
-#tar xvf $CWD/pam-redhat-0.99.11.tar.bz2 || exit 1
-#mv pam-redhat-0.99.11/{CHANGELOG*,COPYING*,README*} .
-#mv pam-redhat-0.99.11/* modules
-
 chown -R root:root .
 find . \
  \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
@@ -79,12 +73,10 @@ find . \
  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
  -exec chmod 644 {} \;
 
-unset SB_AUTOGEN
+unset SBO_AUTOGEN
 if [ -r ${CWD}/apply-patches.sh ]; then
   . ${CWD}/apply-patches.sh
 fi
-
-sed -i -e 's|/lib /usr/lib|/lib /usr/lib /lib64 /usr/lib64|g' m4/libtool.m4
 
 if [ "${SBO_AUTOGEN}" = "YES" ] ;then
   autoreconf -ivf || exit $?
@@ -100,33 +92,19 @@ CXXFLAGS="$SLKCFLAGS" \
   --datarootdir=/usr/share \
   --localstatedir=/var \
   --mandir=/usr/man \
-  --without-xml-catalog \
+  --docdir=/usr/doc/$PKGNAM-$VERSION \
   --disable-regenerate-docu \
   --enable-read-both-confs \
   --disable-prelude \
   --disable-selinux \
   --build=$ARCH-slackware-linux || exit 1
 
-#   --docdir=/usr/doc/$PKGNAM-$VERSION \
-#   --enable-securedir=/lib${LIBDIRSUFFIX}/security \
-
-#make $NUMJOBS || make || exit 1
 make || exit 1
-
-mkdir -p doc/txts
-for readme in modules/pam_*/README ; do
-  cp -f ${readme} doc/txts/README.$(dirname ${readme} | sed -e 's|^modules/||')
-done
-
 make install DESTDIR=$PKG LDCONFIG=: || exit 1
 
 # this is a pam helper, that can only be called from pam
 chmod g+s $PKG/sbin/unix_chkpwd
 chmod u+s $PKG/sbin/unix_chkpwd
-
-# /sbin/pam_timestamp_check needs to be setuid root, or it throws errors.
-chown root.root $PKG/sbin/pam_timestamp_check
-chmod 4755 $PKG/sbin/pam_timestamp_check
 
 # Lets copy the pam files into their directory
 mkdir -p $PKG/etc/pam.d
@@ -135,45 +113,22 @@ for file in ${CWD}/config/* ;do
     ${PKG}/etc/pam.d/ || exit 1
 done
 
-# Strip binaries:
-( cd $PKG
-  find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
-  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
-)
+find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \
+  | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
 
-# Compress and if needed symlink the man pages:
-if [ -d $PKG/usr/man ]; then
-  ( cd $PKG/usr/man
-    for manpagedir in $(find . -type d -name "man*") ; do
-      ( cd $manpagedir
-        for eachpage in $( find . -type l -maxdepth 1) ; do
-          ln -s $( readlink $eachpage ).gz $eachpage.gz
-          rm $eachpage
-        done
-        gzip -9 *.?
-      )
-    done
-  )
-fi
+find $PKG/usr/man -type f -exec gzip -9 {} \;
+for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
-cp -a \
-  AUTHORS COPYING* Copyright NEWS README* \
-  $PKG/usr/doc/$PKGNAM-$VERSION
-
-# If there's a ChangeLog, installing at least part of the recent history
-# is useful, but don't let it get totally out of control:
-if [ -r ChangeLog ]; then
-  DOCSDIR=$(echo $PKG/usr/doc/${PKGNAM}-$VERSION)
-  cat ChangeLog | head -n 1000 > $DOCSDIR/ChangeLog
-  touch -r ChangeLog $DOCSDIR/ChangeLog
-fi
-if [ -r CHANGELOG ]; then
-  DOCSDIR=$(echo $PKG/usr/doc/${PKGNAM}-$VERSION)
-  cat CHANGELOG | head -n 1000 > $DOCSDIR/CHANGELOG
-  touch -r CHANGELOG $DOCSDIR/CHANGELOG
-fi
+cp -a AUTHORS COPYING* Copyright NEWS README* $PKG/usr/doc/$PKGNAM-$VERSION
 rm -f $PKG/usr/doc/$PKGNAM-$VERSION/index.html
+
+# fix some missing symlinks from old pam for compatibility
+cd $PKG/usr/lib${LIBDIRSUFFIX}/security
+ln -s pam_unix.so pam_unix_acct.so
+ln -s pam_unix.so pam_unix_auth.so
+ln -s pam_unix.so pam_unix_passwd.so
+ln -s pam_unix.so pam_unix_session.so
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
