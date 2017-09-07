@@ -80,6 +80,9 @@ CXXFLAGS="$SLKCFLAGS" \
   --mandir=/usr/man \
   --docdir=/usr/doc/$PKGNAM-$VERSION \
   --disable-static \
+  --with-python-binary=python3 \
+  --with-python-rev=3 \
+  --enable-pam \
   --with-securedir=/usr/lib${LIBDIRSUFFIX}/security \
   --build=$ARCH-slackware-linux
 
