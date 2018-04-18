@@ -6,14 +6,14 @@
 # customary to leave one space after the ':'.
 
         |-----handy-ruler------------------------------------------------------|
-pam_krb5: PAM Kerberos 5 (PAM module for Kerberos v5 authentication) 
-pam_krb5:
-pam_krb5: This is pam_krb5, a pluggable authentication module that can be used by
-pam_krb5: PAM-aware applications to check passwords and obtain ticket granting tickets
-pam_krb5: using Kerberos 5, and to change user passwords.
-pam_krb5:
-pam_krb5:
-pam_krb5:
-pam_krb5:
-pam_krb5:
-pam_krb5:
+pam-krb5: PAM Kerberos 5 (PAM module for Kerberos v5 authentication) 
+pam-krb5:
+pam-krb5: This is pam_krb5, a pluggable authentication module that can be used by
+pam-krb5: PAM-aware applications to check passwords and obtain ticket granting tickets
+pam-krb5: using Kerberos 5, and to change user passwords.
+pam-krb5:
+pam-krb5:
+pam-krb5:
+pam-krb5:
+pam-krb5:
+pam-krb5:
