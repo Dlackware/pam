@@ -143,6 +143,9 @@ LDFLAGS="-pie -Wl,-z,relro -Wl,-z,now ${LDFLAGS}" \
 make $NUMJOBS || make || exit 1
 make install DESTDIR=$PKG || exit 1
 
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
+
 # Fix user group = 100:
 cat $CWD/useradd > $PKG/etc/default/useradd
 

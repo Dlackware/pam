@@ -102,6 +102,9 @@ CXXFLAGS="$SLKCFLAGS" \
 make || exit 1
 make install DESTDIR=$PKG LDCONFIG=: || exit 1
 
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
+
 # this is a pam helper, that can only be called from pam
 chmod g+s $PKG/sbin/unix_chkpwd
 chmod u+s $PKG/sbin/unix_chkpwd

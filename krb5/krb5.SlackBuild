@@ -85,6 +85,10 @@ CXXFLAGS="$SLKCFLAGS" \
 make -j4 || make || exit $?
 make install DESTDIR=${PKG} EXAMPLEDIR=/usr/doc/${PKGNAM}-${VERSION}/examples || exit $?
 
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
+
+
 ( cd $PKG
   find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
   find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null

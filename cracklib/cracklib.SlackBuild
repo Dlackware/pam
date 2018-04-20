@@ -79,6 +79,7 @@ chmod +x util/cracklib-format
 
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
+
 ./configure \
   --prefix=/usr \
   --sbindir=/sbin \
@@ -94,6 +95,29 @@ CXXFLAGS="$SLKCFLAGS" \
 make $NUMJOBS || exit 1
 make install DESTDIR=$PKG || exit 1
 make install DESTDIR=${PKG} INSTALL="install -c -p" -C python || exit 1
+
+export PYTHON=python3
+
+make clean
+
+./configure \
+  --prefix=/usr \
+  --sbindir=/sbin \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
+  --sysconfdir=/etc \
+  --localstatedir=/var \
+  --mandir=/usr/man \
+  --docdir=/usr/doc/$PKGNAM-$VERSION \
+  --with-default-dict=/usr/share/cracklib/pw_dict \
+  --disable-static \
+  --build=$ARCH-slackware-linux
+
+make $NUMJOBS || exit 1
+make install DESTDIR=$PKG || exit 1
+make install DESTDIR=${PKG} INSTALL="install -c -p" -C python || exit 1
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 ./util/cracklib-format cracklib-dicts/* | \
 ./util/cracklib-packer ${PKG}/${DICTPATH}

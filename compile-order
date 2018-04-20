@@ -3,4 +3,4 @@ cracklib
 pam
 libpwquality
 shadow
-pam_krb5
+pam-krb5
