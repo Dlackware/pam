@@ -22,7 +22,7 @@
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 PKGNAM=shadow
-VERSION=${VERSION:-4.5}
+VERSION=${VERSION:-4.6}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_dlack}
 
@@ -76,6 +76,11 @@ SBO_PAMD_DIR=${CWD}/pamd
 # breakage:
 cat $CWD/shadow.CVE-2005-4890.relax.diff | patch -p1 --verbose || exit 1
 
+# Patch a race condition that allows a user to kill processes that they don't
+# own.  Note that the bug requires that shadow is using PAM, which is not yet
+# the case on Slackware.  So we're unaffected, but patching this anyway in
+# -current, because you never know...
+cat $CWD/shadow.CVE-2017-2616.diff | patch -p1 --verbose || exit 1
 
 chown -R root:root .
 find . \

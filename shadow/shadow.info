@@ -1,5 +1,5 @@
 PKGNAM="shadow"
-VERSION="4.5"
+VERSION="4.6"
 HOMEPAGE="https://github.com/shadow-maint/shadow"
-DOWNLOAD="https://github.com/shadow-maint/shadow/releases/download/4.5/shadow-4.5.tar.xz"
-MD5SUM="c350da50c2120de6bb29177699d89fe3"
+DOWNLOAD="https://github.com/shadow-maint/shadow/releases/download/4.6/shadow-4.6.tar.xz"
+MD5SUM="b491fecbf1232632c32ff8f1437fd60e"
