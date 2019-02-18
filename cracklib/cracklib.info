@@ -1,7 +1,7 @@
 PKGNAM="cracklib"
 VERSION="2.9.6"
-HOMEPAGE="http://github.com/cracklib/"
-DOWNLOAD="https://github.com/cracklib/cracklib/releases/download/cracklib-2.9.6/cracklib-2.9.6.tar.gz \
-          https://github.com/cracklib/cracklib/releases/download/cracklib-2.9.6/cracklib-words-2.9.6.gz"
+HOMEPAGE="https://github.com/cracklib/cracklib"
+DOWNLOAD="https://download.dlackware.com/hosted-sources/cracklib/cracklib-2.9.6.tar.gz \
+          https://download.dlackware.com/hosted-sources/cracklib/cracklib-words-2.9.6.gz"
 MD5SUM="c52f463585d85924b28cdc1e373ae06d \
-        cae1257e3a9f95c917cc9dbbab852316"
+        2c6ae019c8460400c14347576c01cd75"

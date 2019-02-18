@@ -22,8 +22,8 @@
 # -----------------------------------------------------------------------------
 
 PKGNAM=cracklib
-VERSION=${VERSION:-2.9.6}
-BUILD=${BUILD:-2}
+VERSION=${VERSION:-$(echo $PKGNAM-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
+BUILD=${BUILD:-3}
 TAG=${TAG:-_dlack}
 
 # Automatically determine the architecture we're building on:
@@ -56,6 +56,8 @@ else
   LIBDIRSUFFIX=""
 fi
 
+set -e
+
 DICTPATH=/usr/share/${PKGNAM}/pw_dict
 
 rm -rf $PKG
@@ -73,7 +75,7 @@ find . \
 
 
 mkdir cracklib-dicts
-install -pm0644 ${CWD}/$PKGNAM-words-$VERSION.gz cracklib-dicts/ || exit 1
+install -pm0644 ${CWD}/$PKGNAM-words-$VERSION.gz cracklib-dicts/
 
 chmod +x util/cracklib-format
 
@@ -92,55 +94,23 @@ CXXFLAGS="$SLKCFLAGS" \
   --disable-static \
   --build=$ARCH-slackware-linux
 
-make $NUMJOBS || exit 1
-make install DESTDIR=$PKG || exit 1
-make install DESTDIR=${PKG} INSTALL="install -c -p" -C python || exit 1
-
-export PYTHON=python3
-
-make clean
-
-./configure \
-  --prefix=/usr \
-  --sbindir=/sbin \
-  --libdir=/usr/lib${LIBDIRSUFFIX} \
-  --sysconfdir=/etc \
-  --localstatedir=/var \
-  --mandir=/usr/man \
-  --docdir=/usr/doc/$PKGNAM-$VERSION \
-  --with-default-dict=/usr/share/cracklib/pw_dict \
-  --disable-static \
-  --build=$ARCH-slackware-linux
-
-make $NUMJOBS || exit 1
-make install DESTDIR=$PKG || exit 1
-make install DESTDIR=${PKG} INSTALL="install -c -p" -C python || exit 1
+make $NUMJOBS
+make install DESTDIR=$PKG
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
 
 ./util/cracklib-format cracklib-dicts/* | \
-./util/cracklib-packer ${PKG}/${DICTPATH}
+    ./util/cracklib-packer ${PKG}/${DICTPATH}
 ./util/cracklib-format ${PKG}/usr/share/${PKGNAM}/cracklib-small | \
-./util/cracklib-packer ${PKG}/usr/share/${PKGNAM}/cracklib-small
+    ./util/cracklib-packer ${PKG}/usr/share/${PKGNAM}/cracklib-small
 rm -f ${PKG}/usr/share/${PKGNAM}/cracklib-small
-sed s,/usr/lib/cracklib_dict,${DICTPATH},g lib/crack.h \
-  > ${PKG}/usr/include/crack.h
+sed s,/usr/lib/cracklib_dict,${DICTPATH},g lib/crack.h > \
+    ${PKG}/usr/include/crack.h
 mkdir -p ${PKG}/usr/sbin
 ln -s ../../sbin/cracklib-format ${PKG}/usr/sbin/mkdict
 ln -s ../../sbin/cracklib-packer ${PKG}/usr/sbin/packer
 
-toprelpath=..
-touch ${PKG}/top
-while ! test -f ${PKG}/usr/lib${LIBDIRSUFFIX}/${toprelpath}/top ; do
-  toprelpath=../${toprelpath}
-done
-rm -f ${PKG}/top
-if test ${DICTPATH} != ${PKG}/usr/lib${LIBDIRSUFFIX}/cracklib_dict ; then
-  ln -s ${toprelpath}${DICTPATH}.hwm ${PKG}/usr/lib${LIBDIRSUFFIX}/cracklib_dict.hwm
-  ln -s ${toprelpath}${DICTPATH}.pwd ${PKG}/usr/lib${LIBDIRSUFFIX}/cracklib_dict.pwd
-  ln -s ${toprelpath}${DICTPATH}.pwi ${PKG}/usr/lib${LIBDIRSUFFIX}/cracklib_dict.pwi
-fi
 rm -f ${PKG}/usr/lib${LIBDIRSUFFIX}/python*/site-packages/_cracklibmodule.*a
 rm -f ${PKG}/usr/lib${LIBDIRSUFFIX}/libcrack.la
 
@@ -149,11 +119,11 @@ find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF \
 
 mkdir -p ${PKG}/lib${LIBDIRSUFFIX}
 
-for libname in libcrack ;do
-  mv ${PKG}/usr/lib${LIBDIRSUFFIX}/${libname}.so.* ${PKG}/lib${LIBDIRSUFFIX}/ || exit 1
+for libname in libcrack; do
+  mv ${PKG}/usr/lib${LIBDIRSUFFIX}/${libname}.so.* ${PKG}/lib${LIBDIRSUFFIX}/
   reldir=$(perl -e 'use File::Spec; print File::Spec->abs2rel($ARGV[0], $ARGV[1])' /lib${LIBDIRSUFFIX} /usr/lib${LIBDIRSUFFIX})
   oldlink=$(readlink ${PKG}/usr/lib${LIBDIRSUFFIX}/${libname}.so)
-  ln -sf ${reldir}/$(basename ${oldlink}) ${PKG}/usr/lib${LIBDIRSUFFIX}/${libname}.so || exit 1
+  ln -sf ${reldir}/$(basename ${oldlink}) ${PKG}/usr/lib${LIBDIRSUFFIX}/${libname}.so
 done
 
 mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
