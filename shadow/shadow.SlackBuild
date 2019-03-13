@@ -22,7 +22,7 @@
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 PKGNAM=shadow
-VERSION=${VERSION:-4.6}
+VERSION=${VERSION:-$(echo $PKGNAM-*.tar.xz | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
 BUILD=${BUILD:-2}
 TAG=${TAG:-_dlack}
 
@@ -136,6 +136,7 @@ LDFLAGS="-pie -Wl,-z,relro -Wl,-z,now ${LDFLAGS}" \
   ${SBO_PAMOPTS} \
   --without-selinux \
   --without-audit \
+  --enable-subordinate-ids \
   --with-group-name-max-length=32 \
   --build=$ARCH-slackware-linux
 
