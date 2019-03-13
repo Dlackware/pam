@@ -1,5 +1,5 @@
 PKGNAM="krb5"
-VERSION="1.16.1"
+VERSION="1.17"
 HOMEPAGE="http://web.mit.edu/kerberos/dist/krb5/"
-DOWNLOAD="http://web.mit.edu/kerberos/dist/krb5/1.16/krb5-1.16.1.tar.gz"
-MD5SUM="848e9b80d6aaaa798e3f3df24b83c407"
+DOWNLOAD="http://web.mit.edu/kerberos/dist/krb5/1.17/krb5-1.17.tar.gz"
+MD5SUM="3b729d89eb441150e146780c4138481b"
