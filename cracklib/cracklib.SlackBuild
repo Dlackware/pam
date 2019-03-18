@@ -23,7 +23,7 @@
 
 PKGNAM=cracklib
 VERSION=${VERSION:-$(echo $PKGNAM-*.tar.?z* | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
-BUILD=${BUILD:-3}
+BUILD=${BUILD:-1}
 TAG=${TAG:-_dlack}
 
 # Automatically determine the architecture we're building on:
@@ -82,6 +82,12 @@ chmod +x util/cracklib-format
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 
+#export PYTHON=python3
+
+configure_with_python(){
+
+export PYTHON=python$1
+
 ./configure \
   --prefix=/usr \
   --sbindir=/sbin \
@@ -93,9 +99,24 @@ CXXFLAGS="$SLKCFLAGS" \
   --with-default-dict=/usr/share/cracklib/pw_dict \
   --disable-static \
   --build=$ARCH-slackware-linux
+}
 
-make $NUMJOBS
-make install DESTDIR=$PKG
+#make $NUMJOBS
+#make install DESTDIR=$PKG
+
+CFLAGS="$SLKCFLAGS" \
+  configure_with_python 2 || exit 1
+
+make $NUMJOBS || make || exit 1
+make install DESTDIR=$PKG || exit 1
+
+# Build python3 bindings libcrack:
+make clean
+CFLAGS="$SLKCFLAGS" \
+  configure_with_python 3 || exit 1
+make install DESTDIR=$PKG || exit 1
+
+
 
 # Don't ship .la files:
 rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
@@ -111,8 +132,6 @@ mkdir -p ${PKG}/usr/sbin
 ln -s ../../sbin/cracklib-format ${PKG}/usr/sbin/mkdict
 ln -s ../../sbin/cracklib-packer ${PKG}/usr/sbin/packer
 
-rm -f ${PKG}/usr/lib${LIBDIRSUFFIX}/python*/site-packages/_cracklibmodule.*a
-rm -f ${PKG}/usr/lib${LIBDIRSUFFIX}/libcrack.la
 
 find ${PKG} | xargs file | grep -e "executable" -e "shared object" | grep ELF \
   | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
