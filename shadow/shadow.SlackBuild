@@ -1,7 +1,8 @@
 #!/bin/sh
 
 # Copyright 2005-2012  Patrick J. Volkerding, Sebeka, Minnesota, USA
-# Copyright 2013  Bart van der Hall, Istanbul, TR
+# Copyright 2013-2018  Bart van der Hall, Istanbul, TR
+# Copyright 2019  Eugen Wissner, Dachau, Germany
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -23,7 +24,7 @@
 
 PKGNAM=shadow
 VERSION=${VERSION:-$(echo $PKGNAM-*.tar.xz | rev | cut -f 3- -d . | cut -f 1 -d - | rev)}
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-_dlack}
 
 # Set to NO to disable pam support
@@ -87,13 +88,7 @@ find . \
 # and not requiring users to be in the 'wheel' group, in order to use `su`
 cat $CWD/pamd_settings.patch | patch -p2
 
-unset SBO_AUTOGEN
-if [ -r ${CWD}/apply-patches.sh ]; then
-  . ${CWD}/apply-patches.sh
-fi
-
 sed -i -e '/^GROUP=/s|=.*$|=100|g' etc/useradd || exit 1
-
 sed -i -e '/<stdio.h>/a#include <stdarg.h>' libmisc/copydir.c || exit 1
 
 if [ "${SBO_LIMITS}" = "YES" ] && [ "${SBO_PAM}" != "YES" ] ; then
@@ -109,18 +104,10 @@ if [ "${SBO_SHA512}" = "YES" ] || [ "${SBO_PAM}" = "YES" ] ;then
   sed -i -e '/^ENCRYPT_METHOD /s|^.*$|ENCRYPT_METHOD SHA512|g' etc/login.defs || exit 1
 fi
 
-unset SBO_PAMOPTS
 if [ "${SBO_PAM}" = "YES" ] ;then
   SBO_PAMOPTS='--with-libpam --with-libcrack'
 else
   SBO_PAMOPTS='--without-libpam --without-libcrack'
-fi
-
-#rm -f po/*.gmo
-#rm -f po/stamp-po
-
-if [ "${SBO_AUTOGEN}" = "YES" ] ;then
-  autoreconf -ivf || exit $?
 fi
 
 
