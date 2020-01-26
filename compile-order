@@ -1,4 +1,6 @@
-krb5
+# The Pam part will no longer be updated.
+# Pam will be included in Slackware
+# krb5 - removed | part of Slackware now
 cracklib
 pam
 libpwquality

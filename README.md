@@ -1,4 +1,7 @@
 # Slackware-Pam
+Slackware started to include krb5 and will include pam aswell.
+Development of this part has been stopped.
+
 Lets try and unify PAM for Slackware
 
 The package currently in the base setup are:
